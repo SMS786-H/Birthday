@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Happy Birthday Akka!</title>
+<style>
+    /* Reset and basics */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        scroll-behavior: smooth;
+    }
+    body, html {
+        height: 100%;
+        background: linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%);
+        overflow: hidden;
+        position: relative;
+        color: #4a1c40;
+        background-attachment: fixed;
+    }
+    /* Heart shape */
+    .heart {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background-color: #eb2e7a;
+        transform: rotate(-45deg);
+        animation: float 4s ease-in-out infinite;
+        opacity: 0.7;
+        filter: drop-shadow(0 0 5px #eb2e7acc);
+        cursor: default;
+        user-select: none;
+        touch-action: none;
+    }
+    .heart:before,
+    .heart:after {
+        content: "";
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background-color: #eb2e7a;
+        border-radius: 50%;
+    }
+    .heart:before {
+        top: -25px;
+        left: 0;
+    }
+    .heart:after {
+        left: 25px;
+        top: 0;
+    }
+    @keyframes float {
+        0% { transform: translateY(0) rotate(-45deg); opacity: 0.7;}
+        50% { transform: translateY(-25px) rotate(-45deg); opacity: 0.35;}
+        100% { transform: translateY(0) rotate(-45deg); opacity: 0.7;}
+    }
+
+    /* Flower petals - container for petals */
+    #petalContainer {
+        pointer-events: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: visible;
+        z-index: 0;
+    }
+    .petal {
+        position: absolute;
+        top: -40px;
+        width: 25px;
+        height: 25px;
+        background: radial-gradient(circle at 50% 50%, #ffb6c1, #d1477b);
+        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        opacity: 0.75;
+        filter: drop-shadow(0 0 3px #ff91bcaa);
+        transform-origin: center;
+        animation-name: fall, sway, spin;
+        animation-timing-function: linear, ease-in-out, linear;
+        animation-iteration-count: infinite;
+        user-select: none;
+        touch-action: none;
+    }
+    @keyframes fall {
+        0% {
+            transform: translateY(0);
+            opacity: 0.75;
+        }
+        100% {
+            transform: translateY(110vh);
+            opacity: 0;
+        }
+    }
+    @keyframes sway {
+        0%, 100% { transform: translateX(0); }
+        50% { transform: translateX(15px); }
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg);}
+        100% { transform: rotate(360deg);}
+    }
+
+    /* Container for both pages */
+    .page {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 720px;
+        width: 90%;
+        background: rgba(255 255 255 / 0.9);
+        border-radius: 24px;
+        box-shadow:
+            0 0 15px 1px #eb2e7aa6,
+            inset 0 0 40px 4px #ffb2dacc;
+        padding: 40px 50px;
+        text-align: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.9s ease;
+        backdrop-filter: blur(10px);
+    }
+    .page.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    /* Landing page style */
+    #landing h1 {
+        font-size: 3.5em;
+        color: #d1276c;
+        margin-bottom: 22px;
+        letter-spacing: 1.2px;
+        font-weight: 900;
+        animation: fadeInDown 1.2s ease forwards;
+        text-shadow: 0 2px 8px #ffcee9da;
+        user-select: none;
+    }
+    #landing p {
+        font-size: 1.4em;
+        color: #69354e;
+        margin-bottom: 34px;
+        animation: fadeInUp 1.2s ease forwards;
+        animation-delay: 0.6s;
+        opacity: 0;
+        line-height: 1.5;
+        font-weight: 600;
+        user-select: none;
+    }
+    /* Button */
+    .btn {
+        display: inline-block;
+        padding: 17px 44px;
+        font-size: 1.3em;
+        font-weight: 800;
+        color: #fff;
+        background: linear-gradient(135deg, #e33a89 0%, #c21d6d 100%);
+        border-radius: 50px;
+        text-decoration: none;
+        cursor: pointer;
+        box-shadow: 0 6px 20px rgba(227, 58, 137, 0.6);
+        transition: background 0.35s ease, transform 0.3s ease;
+        user-select: none;
+        animation: pulse 3s infinite;
+        border: none;
+        outline: none;
+    }
+    .btn:hover,
+    .btn:focus {
+        background: linear-gradient(135deg, #c21d6d 0%, #e33a89 100%);
+        box-shadow: 0 8px 26px rgba(194, 29, 109, 0.95);
+        transform: scale(1.07);
+        outline: none;
+    }
+    /* Message page */
+    #message h2 {
+        font-size: 2.6em;
+        color: #a42563;
+        margin-bottom: 26px;
+        animation: fadeInDown 1.1s ease forwards;
+        font-weight: 900;
+        letter-spacing: 1.1px;
+        text-shadow: 1px 1px 5px #ffb9d2cc;
+        user-select: none;
+        font-family: 'Brush Script MT', cursive, 'Segoe UI', Verdana;
+    }
+    #message p {
+        font-size: 1.1em;
+        color: #63354a;
+        line-height: 1.75;
+        text-align: left;
+        white-space: pre-wrap;
+        max-height: 65vh;
+        overflow-y: auto;
+        animation: fadeInUp 1.1s ease forwards;
+        animation-delay: 0.6s;
+        margin-bottom: 25px;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        padding-right: 8px;
+        font-family: 'Georgia', serif;
+        user-select: text;
+    }
+    /* Animations */
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes pulse {
+        0%, 100% { box-shadow: 0 6px 20px rgba(227, 58, 137, 0.6); }
+        50% { box-shadow: 0 0 28px rgba(227, 58, 137, 0.95); }
+    }
+    /* Scrollbar for message */
+    #message p::-webkit-scrollbar {
+        width: 8px;
+    }
+    #message p::-webkit-scrollbar-thumb {
+        background-color: #eb2e7acc;
+        border-radius: 6px;
+        box-shadow: inset 0 0 5px #c21d6d88;
+    }
+    
+    /* Responsive typography */
+    @media (max-width: 480px) {
+        #landing h1 {
+            font-size: 2.5em;
+            padding: 0 10px;
+        }
+        #landing p {
+            font-size: 1.15em;
+            padding: 0 10px;
+        }
+        #message h2 {
+            font-size: 2em;
+        }
+        #message p {
+            font-size: 1em;
+            padding: 0 10px;
+        }
+        .page {
+            padding: 30px 20px;
+        }
+        .btn {
+            font-size: 1.15em;
+            padding: 14px 38px;
+        }
+        .heart {
+            width: 40px;
+            height: 40px;
+        }
+        .heart:before,
+        .heart:after {
+            width: 40px;
+            height: 40px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<!-- Container for flower petals -->
+<div id="petalContainer" aria-hidden="true"></div>
+
+<!-- Landing Page -->
+<div class="page active" id="landing" role="main" aria-label="Landing page">
+    <h1>🌸 Happy Birthday, Akka! 🤍🎂❤</h1>
+    <p>Click the button below to see your birthday wishes! 🎉</p>
+    <button class="btn" id="openMessageBtn" aria-haspopup="true" aria-controls="message">Click Here</button>
+</div>
+
+<!-- Birthday Message Page -->
+<div class="page" id="message" role="main" aria-label="Birthday message" tabindex="-1">
+    <h2>🌸 Happy Birthday, Akka 🤍🎂❤</h2>
+    <p>
+Today is not just your birthday… it’s a celebration of the most special person in my life. From the moment we met at Parul University, you’ve been my guardian angel, my support system, and the biggest blessing I never saw coming.
+
+Akka, I’ve never seen a girl like you in my life — you are strong, selfless, and incredibly hardworking. You always put others first and still carry a smile, no matter what. I’m so, so proud of you and everything you do. You're truly one in a million.
+
+You’ve made my life beautiful in ways I can't explain — from gifting me a purple shirt on Christmas 2023, a watch on my 20th birthday, a dark green t-shirt, white shoes, even a laptop bag, and the first thing you ever gave me — a maroon blanket when I said I didn’t have one. 💜 You always listened… always cared.
+
+You bring me snacks every time we meet, you pay the bill before I even think about it, and somehow you make me feel special every single time. Your love is pure, your heart is golden, and your presence is magic.
+
+Now that you're leaving the university, a piece of my world is leaving too. I don’t know when we’ll meet again, but I do know this: our bond is forever. No distance can take that away from us.
+
+May God bless you with all the happiness, love, and success you’ve ever dreamed of. You deserve the whole world, Akka, and I’ll always be here, cheering for you.
+
+I love you so much. Happy Birthday again, my angel 🤍🎉
+    </p>
+</div>
+
+<script>
+    // Create multiple hearts on the page at random positions
+    const numHearts = 20;
+    for(let i=0; i < numHearts; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        // spread hearts randomly in viewport
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.top = Math.random() * 100 + 'vh';
+        heart.style.animationDuration = (3 + Math.random()*3) + 's'; // varied float speed
+        heart.style.opacity = 0.5 + Math.random() * 0.5;
+        heart.style.transformOrigin = 'center center';
+        heart.style.animationDelay = (Math.random() * 3) + 's';
+        document.body.appendChild(heart);
+    }
+
+    // Flower petal shower
+    const petalContainer = document.getElementById('petalContainer');
+    const petalCount = 30;
+
+    function createPetal() {
+        const petal = document.createElement('div');
+        petal.classList.add('petal');
+        petal.style.left = Math.random() * 100 + 'vw';
+        petal.style.animationDuration = (7 + Math.random() * 5) + 's';
+        petal.style.animationDelay = Math.random() * 7 + 's';
+        petal.style.width = (15 + Math.random() * 15) + 'px';
+        petal.style.height = petal.style.width;
+        // random initial rotation
+        petal.style.transform = `rotate(${Math.random() * 360}deg)`;
+        petalContainer.appendChild(petal);
+        // Remove after animation completes
+        setTimeout(() => {
+            petal.remove();
+            createPetal();  // continuously create
+        }, (parseFloat(petal.style.animationDuration) + parseFloat(petal.style.animationDelay)) * 1000);
+    }
+    for(let i=0; i < petalCount; i++) {
+        setTimeout(createPetal, i * 500);
+    }
+
+    // Handle the click event to switch views with smooth fade
+    const openMessageBtn = document.getElementById('openMessageBtn');
+    const landing = document.getElementById('landing');
+    const messagePage = document.getElementById('message');
+
+    openMessageBtn.addEventListener('click', () => {
+        landing.classList.remove('active');
+        messagePage.classList.add('active');
+        messagePage.focus();
+    });
+</script>
+
+</body>
+</html>
